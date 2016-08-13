@@ -6,7 +6,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoCollection;
+
 import java.util.*;
 import org.bson.Document;
 
@@ -41,44 +41,65 @@ public class DB {
 
     }
 
-    public static User login(String email,String password)
+/*func get user
+        by id ,para string id ,chk of user
+            if exits return user if not return null*/
+
+    public static User get_USERID(String _id)
     {
-        if(email.equals() && password.equals())
-        {
-            return
-        }
+        User user=null;
+        FindIterable<Document> userFind=mongoDatabase.getCollection("Users").find(new BasicDBObject("_id",_id));
+        if (userFind!=null)
+            return user;
+        return null;
 
     }
 
-/*    public int getValue(SignIn signIn)
-    {
-        MongoCollection<Document> dbCollection=mongoDatabase.getCollection("Users");
-        FindIterable<Document> cursor=dbCollection.find();
-        try {
 
-            for (Document document:cursor) {
-                if (document.equals(signIn)) {
-                  String id=  document.getObjectId(signIn);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            e.getMessage();
-        }
-    return ;
-}*/
+    public static User login(String email, String password) {
 
-    public static List<Signup> getList()
+
+        User user=null;
+        FindIterable<Document> cursor = mongoDatabase.getCollection("Users").find(new BasicDBObject("email", email).append("password", password));
+
+                if(cursor!=null)
+                     user = new User(cursor.first());
+
+            return user;
+        
+
+
+    }
+
+
+
+
+
+    public static String insertPost(Post post)throws IOException
     {
-        List<Signup> signIns=new ArrayList<>();
-        FindIterable<Document>iterable=mongoDatabase.getCollection("Users").find();
-        for (Document document:iterable)
+        Document document=post.toDocument();
+        mongoDatabase.getCollection("post").insertOne(document);
+        String _id= document.getObjectId(Post.ID).toString();
+
+        if (_id==null)
         {
-            Signup signUp=new Signup(document);
-            signIns.add(signUp);
+            throw new IOException("Document not inserted in collection");
         }
-        return signIns;
+        return _id;
+
+    }
+
+
+    public static List<Post> getPosts()
+    {
+        List <Post>posts=new ArrayList<>();
+        FindIterable<Document>iterate=mongoDatabase.getCollection("post").find();
+        for (Document document:iterate)
+        {
+            Post post=new Post(document);
+            posts.add(post);
+        }
+        return posts;
     }
 
 }

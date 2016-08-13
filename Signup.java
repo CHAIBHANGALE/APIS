@@ -9,7 +9,7 @@ import org.json.JSONObject;
  */
 public class Signup {
 
-    private int id;
+    private String _id;
     private String email;
     private String password;
 
@@ -29,9 +29,9 @@ public class Signup {
     //Insertion into database values
     Signup(Document document)
     {
-        document.getObjectId(ID).toString();
-        document.getString(EMAIL);
-        document.getString(PASSWORD);
+        _id=document.getObjectId(ID).toString();
+        email=document.getString(EMAIL);
+        password=document.getString(PASSWORD);
 
     }
 
@@ -41,7 +41,6 @@ public class Signup {
     Document toDocument()
     {
         Document document=new Document();
-        //document.append(ID,id);
         document.append(EMAIL,email);
         document.append(PASSWORD,password);
         return document;
@@ -49,12 +48,12 @@ public class Signup {
 
 
 
-    public JSONObject toJSONObject() throws JSONException
+   /* public JSONObject toJSONObject() throws JSONException
     {
         JSONObject jsonObject=new JSONObject();
         jsonObject.put(ID,id);
         jsonObject.put(EMAIL,email);
         jsonObject.put(PASSWORD,password);
         return jsonObject;
-    }
+    }*/
 }
