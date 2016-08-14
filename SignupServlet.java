@@ -23,15 +23,23 @@ public class SignupServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        // Set header Content-type of the HttpResponse
+        // Read more here. https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
         response.setContentType("application/json");
-        String email=request.getParameter(Signup.EMAIL);
+        // For accepting cross domain requests
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");
+        response.addHeader("Access-Control-Allow-Headers", "Content-Type");
 
+        //get email by get method
+        String email=request.getParameter(Signup.EMAIL);
         if (email==null || email.equals(""))
         {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Field 'email' required");
             return ;
         }
 
+        //get password by get method
         String password=request.getParameter(Signup.PASSWORD);
 
         if (password==null || password.equals("")  )
@@ -42,13 +50,17 @@ public class SignupServlet extends HttpServlet {
 
             try {
                 Signup signup = new Signup(email, password);
+                //insert a single value in database
                 String _id=DB.insertValue(signup);
+                //creating a json object and put the id of data inserted into it
                 JSONObject jsonResponse=new JSONObject();
                 jsonResponse.put(Signup.ID,_id);
 
+                //function to print the id ie return response
                 response.getWriter().write(jsonResponse.toString());
             }
 
+            //if input output erroroccurs due to database
         catch (IOException | JSONException e)
         {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.getMessage());
